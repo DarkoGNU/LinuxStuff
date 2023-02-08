@@ -1,0 +1,69 @@
+# Documentation: https://www.freedesktop.org/software/systemd/man/systemd.service.html
+# Installation:
+# 0. Configure the service
+# 1. Install the file in /etc/systemd/system
+# 2. systemctl daemon-reload
+# 3. systemctl enable --now service
+
+[Unit]
+# Description of the service
+Description=Confluence Systemd service
+# This service should start after these services:
+After=network.target
+# This service should start before these services:
+# Before=
+# Weak dependencies for the service (start the service even if they fail):
+# Wants=
+# Strong dependencies for the service (don't start the service if they fail):
+# Requires=
+
+[Service]
+# Type=forking - the script/command in ExecStart will fork
+Type=forking
+
+# PID file (recommended for Type=forking)
+RuntimeDirectory=confluence.service
+PIDFile=/run/confluence.service/catalina.pid
+Environment=CATALINA_PID=/run/confluence.service/catalina.pid
+
+# User used to start the service
+User=confluence
+# Group used to start the service
+Group=confluence
+
+# Startup script/command
+ExecStart=/opt/atlassian/confluence/bin/startup.sh
+# Shutdown script/command - wait 45 seconds before thread dump
+ExecStop=/opt/atlassian/confluence/bin/shutdown.sh 45
+
+# Wait 30 seconds after ExecStop before killing
+TimeoutStopSec=30
+# Kill all processes spawned by this service
+KillMode=control-group
+# Kill them with SIGTERM
+KillSignal=SIGTERM
+# Send FinalKillSignal if SIGTERM didn't stop the processed within 30 seconds
+SendSIGKILL=yes
+# Explained above
+FinalKillSignal=SIGKILL
+
+# Uncomment to restart the service when it fails
+# Restart on failure (unclean exit code, unclean signal, timeout)
+Restart=on-failure
+# Sleep 10 seconds before restart
+RestartSec=10
+# Limit restart attempts
+StartLimitInterval=600
+# Limit restart attempts
+StartLimitBurst=3
+
+# Exit codes and signals that are considered to terminate the service cleanly
+# (in addition to code 0 and signals SIGHUP, SIGINT, SIGTERM, and SIGPIPE)
+SuccessExitStatus=143 SIGKILL
+
+# Working directory for the service
+# WorkingDirectory=/apps/tomcat
+
+# Uncomment to allow the service to be enabled
+# [Install]
+# WantedBy=multi-user.target
