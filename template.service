@@ -40,7 +40,7 @@ ExecStop=/opt/atlassian/confluence/bin/shutdown.sh 45
 TimeoutStopSec=15
 # Kill all processes spawned by this service
 KillMode=control-group
-# Send FinalKillSignal if SIGTERM didn't stop the processes
+# Send SIGKILL if SIGTERM didn't stop the processes
 SendSIGKILL=yes
 
 # Uncomment to restart the service when it fails
