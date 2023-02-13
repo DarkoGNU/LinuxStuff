@@ -36,13 +36,13 @@ ExecStart=/opt/atlassian/confluence/bin/startup.sh
 # Shutdown script/command - wait 45 seconds before thread dump
 ExecStop=/opt/atlassian/confluence/bin/shutdown.sh 45
 
-# Wait 30 seconds after ExecStop before killing
-TimeoutStopSec=30
+# Wait 15 seconds after ExecStop before SIGTERM and another 15 before SIGKILL
+TimeoutStopSec=15
 # Kill all processes spawned by this service
 KillMode=control-group
 # Kill them with SIGTERM
 KillSignal=SIGTERM
-# Send FinalKillSignal if SIGTERM didn't stop the processed within 30 seconds
+# Send FinalKillSignal if SIGTERM didn't stop the processes
 SendSIGKILL=yes
 # Explained above
 FinalKillSignal=SIGKILL
