@@ -7,13 +7,13 @@
 
 [Unit]
 # Description of the service
-Description=Confluence Systemd service
+Description=Luy Systemd service (Tomcat)
 # This service should start after these services:
-After=network.target
+After=network-online.target mysqld.service
 # This service should start before these services:
 # Before=
 # Weak dependencies for the service (start the service even if they fail):
-# Wants=
+Wants=mysqld.service
 # Strong dependencies for the service (don't start the service if they fail):
 # Requires=
 
@@ -22,19 +22,19 @@ After=network.target
 Type=forking
 
 # PID file (recommended for Type=forking)
-RuntimeDirectory=confluence.service
-PIDFile=/run/confluence.service/catalina.pid
-Environment=CATALINA_PID=/run/confluence.service/catalina.pid
+RuntimeDirectory=luy.service
+PIDFile=/run/luy.service/catalina.pid
+Environment=CATALINA_PID=/run/luy.service/catalina.pid
 
 # User used to start the service
-User=confluence
+User=root
 # Group used to start the service
-Group=confluence
+Group=root
 
 # Startup script/command
-ExecStart=/opt/atlassian/confluence/bin/startup.sh
+ExecStart=/apps/iteraplan/apache-tomcat/bin/startup.sh
 # Shutdown script/command - wait 45 seconds before thread dump
-ExecStop=/opt/atlassian/confluence/bin/shutdown.sh 45
+ExecStop=/apps/iteraplan/apache-tomcat/bin/shutdown.sh 45
 
 # Wait 15 seconds after ExecStop before SIGTERM and another 15 before SIGKILL
 TimeoutStopSec=15
@@ -61,5 +61,5 @@ SuccessExitStatus=143 SIGKILL
 # WorkingDirectory=/apps/tomcat
 
 # Uncomment to allow the service to be enabled
-# [Install]
-# WantedBy=multi-user.target
+[Install]
+WantedBy=multi-user.target
