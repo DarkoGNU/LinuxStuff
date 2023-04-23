@@ -2,8 +2,8 @@
 
 # Simple backup scripts that backs up an application running as a user systemd service.
 # It will stop the application, create a filesystem snapshot, and then immediately start the application. This ensures that backed up data is consistent.
-# Tested only with thin LVs.
 
+# --- Right now - works only with thin LVs ---
 # --- Schedule with cron                   ---
 # --- Wrap in another script to log output ---
 
