@@ -33,6 +33,8 @@ info "Ensuring that base directories are created"
 mkdir -p "$REPO_FOLDER"
 mkdir -p "$MOUNT_FOLDER"
 
+info "Starting the backup script"
+
 # Backup all repositories
 for (( i=0; i<${#REPOSITORIES[@]}; i++ )); do
 	### Set variables
@@ -75,4 +77,8 @@ for (( i=0; i<${#REPOSITORIES[@]}; i++ )); do
 	rmdir "$MOUNT"
 	info "Removing the snapshot"
 	lvremove -y "/dev/${SNAPSHOT}"
+
+	info "Backing up repository ${REPO} finished"
 done
+
+info "The backup script finished"
