@@ -7,43 +7,58 @@
 # --- REPOSITORIES,LOCATIONS,VOLUMES have to match           ---
 # --- Even if all the backed up locations are on the same LV ---
 
+# Functions
+info () { echo -e "\e[32m[INFO]\e[0m ${1}" ; }
+error () { echo -e "\e[31m[INFO]\e[0m ${1}" ; }
+
 # Duplicacy config
 BASE_FOLDER="/opt/duplicacy/data"         # Base folder for all data used by script
 REPO_FOLDER="${BASE_FOLDER}/repositories" # Folder for storing repository data (what normally is stored in .duplicacy)
 MOUNT_FOLDER="${BASE_FOLDER}/mounts"      # Folder where snapshots will be mounted
-INIT_FOLDER="${BASE_FOLDER}/initialized"  # Folder where information whether repositories are already analyzed is stored
+
+STORAGE_NAME="google-drive" # Name of the storage used
+STORAGE="gcd://duplicacy"   # URL of the storage used
 
 # Repositories and locations
-REPOSITORIES=("ampere-home") # "ampere-etc" "ampere-root")
-LOCATIONS=("/home" "/etc" "/root")
+REPOSITORIES=("ampere-home") # "ampere-etc" "ampere-root") # Names of the repositories
+LOCATIONS=("home" "etc" "root")                            # Folder inside the volume to back up (empty to back up root of the volume)
 
 # Drive configuration
 SNAP_PREFIX=duplicacy-
 VOLUMES=("ocivolume/root" "ocivolume/root" "ocivolume/root")
 
-# Ensure that all repositories are initialized
-for (( i=0; i<${#REPOSITORIES[@]}; i++ )); do
-	REPO="${REPOSITORIES[${i}]}"
-	if [[ ! -f  ]]; then
-
-	fi
-done
+# Ensure that base paths are created
+echo mkdir -p "$REPO_FOLDER"
+echo mkdir -p "$MOUNT_FOLDER"
 
 # Backup all repositories
 for (( i=0; i<${#REPOSITORIES[@]}; i++ )); do
-	# Set variables
+	### Set variables
+	REPO="${REPOSITORIES[${i}]}"         # Repo name
+        REPO_PATH="${REPO_FOLDER}/${REPO}"   # Path to repository data
+
         MOUNT="${MOUNT_FOLDER}/${REPOSITORIES[${i}]}"               # Mount point for the snapshot
         VOLUME="${VOLUMES[${i}]}"                                   # Volume on which the backup is performed
 	VOL_GROUP="$(dirname $VOLUME)"                              # Volume group of that volume
 	SNAPSHOT="${VOL_GROUP}/${SNAP_PREFIX}${REPOSITORIES[${i}]}" # Snapshot name (with VG)
 
-	# Make a snapshot
+	BACKUP_PATH="${MOUNT}/"
+
+	### Backup
+	info "Backing up repository ${REPO}, backed up location:
+
+	info "Creating a snapshot"
 	echo lvcreate --snapshot --name "$SNAPSHOT" "$VOLUME"
 
-	# Mount the snapshot
+	info "Mounting the snapshot"
 	echo mkdir -p "$MOUNT"
 	echo lvchange -ay -Ky "$SNAPSHOT"
 	echo mount -o nouuid,ro "/dev/${SNAPSHOT}" "$MOUNT"
+
+	info "Checking if the repo 
+        if [[ ! -d "$REPO_PATH" ]]; then
+                echo duplicacy init -pref-dir "$REPO_PATH" -repository "$MOUNT" -storage-name "$STORAGE_NAME" "$STORAGE"
+        fi
 
 	# Unmount the snapshot
 	echo umount "/dev/${SNAPSHOT}"
