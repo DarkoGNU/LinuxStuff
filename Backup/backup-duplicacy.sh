@@ -67,7 +67,7 @@ for (( i=0; i<${#REPOSITORIES[@]}; i++ )); do
 	info "Starting the actual backup"
 	echo -n "$REPO_PATH" > .duplicacy
 	warn "Please wait, the token path will be passed automatically!"
-	(sleep 5; echo "$GCD_TOKEN") | duplicacy backup -threads "$THREADS" -stats
+	(sleep 5; echo "$GCD_TOKEN") | duplicacy backup -threads "$THREADS"
 
 	info "Unmounting the snapshot"
 	umount "/dev/${SNAPSHOT}"
